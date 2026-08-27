@@ -40,7 +40,7 @@
 
 const TELEGRAM_BOT_TOKEN = "COLLE_TON_TOKEN_ICI";
 const TELEGRAM_CHAT_ID = "COLLE_TON_CHAT_ID_ICI";
-const PROXY_URL = "https://boutique-telegram.antoinegelly.workers.dev";
+const PROXY_URL = "https://antoineegly.antoinegelly44.workers.dev/";
 
 // Envoie un message texte à ton Telegram. Renvoie true si ça a marché.
 async function envoyerSurTelegram(texte){
