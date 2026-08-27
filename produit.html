@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produit — Ma boutique</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <a href="boutique.html" class="entete-logo">Ma Boutique</a>
+    <nav class="entete-nav">
+      <a href="boutique.html">Boutique</a>
+      <a href="panier.html" class="lien-panier">
+        Panier <span class="badge-panier">0</span>
+      </a>
+    </nav>
+  </header>
+
+  <div class="contenu">
+    <div class="fil-ariane">
+      <a href="boutique.html">Boutique</a> / <span id="fil-nom"></span>
+    </div>
+
+    <div class="fiche-produit" id="fiche"></div>
+  </div>
+
+  <script src="produits.js"></script>
+  <script src="panier.js"></script>
+  <script>
+    // Récupère l'id du produit dans l'URL (produit.html?id=1)
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get("id"));
+    const produit = PRODUITS.find(p => p.id === id);
+
+    const fiche = document.getElementById("fiche");
+
+    if(!produit){
+      fiche.innerHTML = "<p style='color:var(--muted)'>Produit introuvable.</p>";
+    }else{
+      document.title = produit.nom + " — Ma boutique";
+      document.getElementById("fil-nom").textContent = produit.nom;
+
+      // ---- Colonne galerie ----
+      const colGalerie = document.createElement("div");
+
+      const principale = document.createElement("div");
+      principale.className = "fiche-galerie-principale";
+      principale.appendChild(creerImageAvecSecours(produit.images[0], produit.nom, "fiche-galerie-principale-int"));
+      colGalerie.appendChild(principale);
+
+      if(produit.images.length > 1){
+        const vignettes = document.createElement("div");
+        vignettes.className = "fiche-vignettes";
+        produit.images.forEach((src, i) => {
+          const v = document.createElement("div");
+          v.className = "vignette" + (i === 0 ? " active" : "");
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = produit.nom;
+          img.onerror = () => { img.style.display = "none"; };
+          v.appendChild(img);
+          v.addEventListener("click", () => {
+            document.querySelectorAll(".vignette").forEach(el => el.classList.remove("active"));
+            v.classList.add("active");
+            principale.innerHTML = "";
+            principale.appendChild(creerImageAvecSecours(src, produit.nom, "fiche-galerie-principale-int"));
+          });
+          vignettes.appendChild(v);
+        });
+        colGalerie.appendChild(vignettes);
+      }
+
+      // ---- Colonne infos ----
+      const colInfos = document.createElement("div");
+
+      const label = document.createElement("div");
+      label.className = "fiche-label";
+      label.textContent = "Réf. " + produit.ref;
+
+      const titre = document.createElement("h1");
+      titre.className = "fiche-titre";
+      titre.textContent = produit.nom;
+
+      const prix = document.createElement("div");
+      prix.className = "fiche-prix";
+      prix.textContent = formaterPrix(produit.prix);
+
+      const description = document.createElement("ul");
+      description.className = "fiche-description";
+      produit.description.forEach(point => {
+        const li = document.createElement("li");
+        li.textContent = point;
+        description.appendChild(li);
+      });
+
+      const achat = document.createElement("div");
+      achat.className = "fiche-achat";
+
+      let quantite = 1;
+      achat.innerHTML = `
+        <div class="stepper">
+          <button type="button" id="moins">−</button>
+          <span id="qte-affichee">1</span>
+          <button type="button" id="plus">+</button>
+        </div>
+        <button type="button" class="bouton-principal" id="btn-ajouter">Ajouter au panier</button>
+        <div class="confirmation-ajout" id="confirmation">Ajouté au panier ✓</div>
+      `;
+
+      colInfos.appendChild(label);
+      colInfos.appendChild(titre);
+      colInfos.appendChild(prix);
+      colInfos.appendChild(description);
+      colInfos.appendChild(achat);
+
+      fiche.appendChild(colGalerie);
+      fiche.appendChild(colInfos);
+
+      document.getElementById("moins").addEventListener("click", () => {
+        quantite = Math.max(1, quantite - 1);
+        document.getElementById("qte-affichee").textContent = quantite;
+      });
+      document.getElementById("plus").addEventListener("click", () => {
+        quantite++;
+        document.getElementById("qte-affichee").textContent = quantite;
+      });
+      document.getElementById("btn-ajouter").addEventListener("click", () => {
+        ajouterAuPanier(produit.id, quantite);
+        const confirmation = document.getElementById("confirmation");
+        confirmation.style.display = "block";
+        setTimeout(() => { confirmation.style.display = "none"; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

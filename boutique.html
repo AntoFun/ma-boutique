@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ma boutique</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <a href="boutique.html" class="entete-logo">Ma Boutique</a>
+    <nav class="entete-nav">
+      <a href="boutique.html">Boutique</a>
+      <a href="panier.html" class="lien-panier">
+        Panier <span class="badge-panier">0</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- ============================================= -->
+  <!-- BANNIERE : remplace le src par ton image       -->
+  <!-- ============================================= -->
+  <div class="banniere">
+    <!-- Décommente la ligne ci-dessous et mets ton image dans le même dossier -->
+    <!-- <img src="banniere.jpg" alt="Bannière"> -->
+    <div class="banniere-vide">Remplace cette zone par ton image de bannière<br>(section "BANNIERE" dans boutique.html)</div>
+    <div class="banniere-titre"><span>Collection</span>Ma Boutique</div>
+  </div>
+
+  <div class="contenu">
+    <div class="section-header">
+      <h2>Produits</h2>
+      <span class="compte" id="compte-produits"></span>
+    </div>
+    <div class="grille" id="grille-produits"></div>
+  </div>
+
+  <script src="produits.js"></script>
+  <script src="panier.js"></script>
+  <script>
+    const grille = document.getElementById("grille-produits");
+    document.getElementById("compte-produits").textContent =
+      PRODUITS.length.toString().padStart(2, "0") + " articles";
+
+    PRODUITS.forEach(p => {
+      const carte = document.createElement("a");
+      carte.href = "produit.html?id=" + p.id;
+      carte.className = "produit";
+
+      carte.appendChild(creerImageAvecSecours(p.images[0], p.nom, "produit"));
+
+      const info = document.createElement("div");
+      info.className = "produit-info";
+      info.innerHTML = `
+        <div class="produit-label">Réf. ${echapperHTML(p.ref)}</div>
+        <div class="produit-nom">${echapperHTML(p.nom)}</div>
+        <div class="produit-prix">${formaterPrix(p.prix)}</div>
+      `;
+      carte.appendChild(info);
+
+      grille.appendChild(carte);
+    });
+  </script>
+</body>
+</html>

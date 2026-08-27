@@ -1,0 +1,637 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root{
+  --bg:#111111;
+  --bg-carte:#181818;
+  --fg:#f4f2ec;
+  --muted:#8c8a83;
+  --line:#2a2a2a;
+  --accent:#ff3b1f;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:'Oswald', sans-serif;
+  font-weight:400;
+}
+
+a{color:inherit;text-decoration:none;}
+
+/* ---------- ENTETE / NAV ---------- */
+.entete{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 5%;
+  border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  background:rgba(17,17,17,0.92);
+  backdrop-filter:blur(6px);
+  z-index:10;
+}
+
+.entete-logo{
+  font-family:'Archivo Black', sans-serif;
+  text-transform:uppercase;
+  font-size:1.1rem;
+  letter-spacing:-0.01em;
+}
+
+.entete-nav{
+  display:flex;
+  align-items:center;
+  gap:28px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.8rem;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+
+.lien-panier{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.badge-panier{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:var(--accent);
+  color:#111;
+  font-weight:600;
+  font-size:0.7rem;
+  min-width:18px;
+  height:18px;
+  border-radius:50%;
+  padding:0 4px;
+}
+
+/* ---------- BANNIERE ---------- */
+.banniere{
+  position:relative;
+  width:100%;
+  height:38vh;
+  min-height:260px;
+  overflow:hidden;
+  border-bottom:2px solid var(--accent);
+  background:#1a1a1a;
+}
+
+.banniere img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  filter:grayscale(15%) contrast(1.05);
+}
+
+.banniere::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%);
+}
+
+.banniere-titre{
+  position:absolute;
+  left:5%;
+  bottom:28px;
+  z-index:2;
+  font-family:'Archivo Black', sans-serif;
+  font-size:clamp(2rem, 6vw, 4rem);
+  letter-spacing:-0.02em;
+  text-transform:uppercase;
+  line-height:0.95;
+}
+
+.banniere-titre span{
+  display:block;
+  color:var(--accent);
+  font-size:0.32em;
+  font-family:'JetBrains Mono', monospace;
+  letter-spacing:0.15em;
+  margin-bottom:10px;
+}
+
+.banniere-vide{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--muted);
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.9rem;
+  letter-spacing:0.05em;
+  text-align:center;
+  padding:0 20px;
+}
+
+/* ---------- CONTENU GENERAL ---------- */
+.contenu{
+  max-width:1200px;
+  margin:0 auto;
+  padding:60px 24px 100px;
+}
+
+.section-header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-bottom:36px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:18px;
+}
+
+.section-header h2{
+  font-family:'Archivo Black', sans-serif;
+  text-transform:uppercase;
+  font-size:1.5rem;
+  letter-spacing:-0.01em;
+}
+
+.section-header .compte{
+  font-family:'JetBrains Mono', monospace;
+  color:var(--muted);
+  font-size:0.85rem;
+}
+
+/* ---------- GRILLE PRODUITS (boutique) ---------- */
+.grille{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+  gap:28px;
+}
+
+.produit{
+  background:var(--bg-carte);
+  border:1px solid var(--line);
+  transition:border-color 0.2s ease, transform 0.2s ease;
+  display:block;
+}
+
+.produit:hover{
+  border-color:var(--accent);
+  transform:translateY(-3px);
+}
+
+.produit-image{
+  width:100%;
+  aspect-ratio:1/1;
+  overflow:hidden;
+  background:#0d0d0d;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.produit-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.image-vide{
+  color:var(--muted);
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.75rem;
+  text-align:center;
+  padding:20px;
+  letter-spacing:0.05em;
+}
+
+.produit-info{
+  padding:16px 18px 20px;
+  border-top:1px dashed var(--line);
+}
+
+.produit-label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.68rem;
+  color:var(--accent);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+
+.produit-nom{
+  font-size:1.05rem;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:0.01em;
+}
+
+.produit-prix{
+  font-family:'JetBrains Mono', monospace;
+  color:var(--fg);
+  margin-top:8px;
+  font-size:0.95rem;
+}
+
+/* ---------- FIL D'ARIANE ---------- */
+.fil-ariane{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.75rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  margin-bottom:32px;
+}
+
+.fil-ariane a:hover{color:var(--accent);}
+
+/* ---------- FICHE PRODUIT (style Amazon) ---------- */
+.fiche-produit{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:56px;
+}
+
+.fiche-galerie-principale{
+  width:100%;
+  aspect-ratio:1/1;
+  background:#0d0d0d;
+  border:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  margin-bottom:14px;
+}
+
+.fiche-galerie-principale img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.fiche-vignettes{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.vignette{
+  width:70px;
+  height:70px;
+  border:1px solid var(--line);
+  cursor:pointer;
+  overflow:hidden;
+  background:#0d0d0d;
+}
+
+.vignette.active{border-color:var(--accent);}
+
+.vignette img{width:100%;height:100%;object-fit:cover;}
+
+.fiche-label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.72rem;
+  color:var(--accent);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+
+.fiche-titre{
+  font-family:'Archivo Black', sans-serif;
+  text-transform:uppercase;
+  font-size:1.8rem;
+  line-height:1.15;
+  margin-bottom:18px;
+}
+
+.fiche-prix{
+  font-family:'JetBrains Mono', monospace;
+  font-size:1.8rem;
+  margin-bottom:24px;
+}
+
+.fiche-description{
+  list-style:none;
+  margin-bottom:32px;
+}
+
+.fiche-description li{
+  padding:10px 0;
+  border-top:1px dashed var(--line);
+  font-size:0.95rem;
+  color:#d8d6cf;
+}
+
+.fiche-description li:first-child{border-top:none;}
+
+.fiche-achat{
+  border:1px solid var(--line);
+  padding:22px;
+  background:var(--bg-carte);
+}
+
+.stepper{
+  display:flex;
+  align-items:center;
+  border:1px solid var(--line);
+  width:fit-content;
+  margin-bottom:18px;
+}
+
+.stepper button{
+  background:none;
+  border:none;
+  color:var(--fg);
+  font-family:'JetBrains Mono', monospace;
+  font-size:1.1rem;
+  width:38px;
+  height:38px;
+  cursor:pointer;
+}
+
+.stepper button:hover{color:var(--accent);}
+
+.stepper span{
+  min-width:40px;
+  text-align:center;
+  font-family:'JetBrains Mono', monospace;
+}
+
+.bouton-principal{
+  display:inline-block;
+  background:var(--accent);
+  color:#111;
+  border:none;
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  font-size:0.95rem;
+  padding:14px 20px;
+  cursor:pointer;
+  width:100%;
+  transition:opacity 0.2s ease;
+}
+
+.bouton-principal:hover{opacity:0.85;}
+
+.confirmation-ajout{
+  margin-top:14px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.8rem;
+  color:var(--accent);
+  display:none;
+}
+
+/* ---------- PANIER ---------- */
+.ligne-panier{
+  display:grid;
+  grid-template-columns:90px 1fr auto auto auto;
+  align-items:center;
+  gap:20px;
+  padding:20px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.ligne-panier-image{
+  width:90px;
+  height:90px;
+  background:#0d0d0d;
+  border:1px solid var(--line);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ligne-panier-image img{width:100%;height:100%;object-fit:cover;}
+.ligne-panier-image .image-vide{font-size:0.6rem;padding:6px;}
+
+.ligne-panier-nom{
+  text-transform:uppercase;
+  font-size:1rem;
+}
+
+.ligne-panier-ref{
+  font-family:'JetBrains Mono', monospace;
+  color:var(--muted);
+  font-size:0.72rem;
+  margin-top:4px;
+}
+
+.ligne-panier-prix{
+  font-family:'JetBrains Mono', monospace;
+}
+
+.retirer-btn{
+  background:none;
+  border:1px solid var(--line);
+  color:var(--muted);
+  width:32px;
+  height:32px;
+  cursor:pointer;
+  font-family:'JetBrains Mono', monospace;
+}
+
+.retirer-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+.panier-total{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:28px 0 0;
+  font-family:'JetBrains Mono', monospace;
+  font-size:1.3rem;
+}
+
+.panier-vide{
+  color:var(--muted);
+  font-family:'JetBrains Mono', monospace;
+  padding:60px 0;
+  text-align:center;
+}
+
+/* ---------- COMMANDE ---------- */
+.page-commande{
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:56px;
+  align-items:start;
+}
+
+.recap-commande{
+  border:1px solid var(--line);
+  background:var(--bg-carte);
+  padding:22px;
+}
+
+.recap-titre{
+  font-family:'Archivo Black', sans-serif;
+  text-transform:uppercase;
+  font-size:1rem;
+  margin-bottom:18px;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--line);
+}
+
+.recap-ligne{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  font-size:0.9rem;
+  padding:8px 0;
+  border-top:1px dashed var(--line);
+}
+
+.recap-ligne:first-of-type{border-top:none;}
+
+.recap-ligne .recap-nom{color:#d8d6cf;}
+.recap-ligne .recap-qte{color:var(--muted);font-family:'JetBrains Mono', monospace;font-size:0.8rem;}
+
+.recap-total{
+  display:flex;
+  justify-content:space-between;
+  margin-top:18px;
+  padding-top:14px;
+  border-top:1px solid var(--line);
+  font-family:'JetBrains Mono', monospace;
+  font-size:1.1rem;
+}
+
+.ligne-champs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+@media (max-width:500px){
+  .ligne-champs{grid-template-columns:1fr;}
+}
+
+.note-envoi{
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.75rem;
+  color:var(--muted);
+  margin-top:14px;
+}
+
+.champ{
+  margin-bottom:22px;
+}
+
+.champ label{
+  display:block;
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.72rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+
+.champ input[type="text"],
+.champ textarea{
+  width:100%;
+  background:var(--bg-carte);
+  border:1px solid var(--line);
+  color:var(--fg);
+  font-family:'Oswald', sans-serif;
+  font-size:0.95rem;
+  padding:12px 14px;
+  outline:none;
+}
+
+.champ input[type="text"]:focus,
+.champ textarea:focus{border-color:var(--accent);}
+
+.champ textarea{resize:vertical;min-height:90px;}
+
+.options-radio{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.option-radio{
+  border:1px solid var(--line);
+  padding:12px 16px;
+  cursor:pointer;
+  font-size:0.9rem;
+  text-transform:uppercase;
+  letter-spacing:0.02em;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.option-radio:has(input:checked){
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+.option-radio input{accent-color:var(--accent);}
+
+.erreur-champ{
+  color:var(--accent);
+  font-family:'JetBrains Mono', monospace;
+  font-size:0.72rem;
+  margin-top:8px;
+  display:none;
+}
+
+.boutons-commande{
+  display:flex;
+  gap:14px;
+  margin-top:36px;
+}
+
+.bouton-secondaire{
+  display:inline-block;
+  background:none;
+  border:1px solid var(--line);
+  color:var(--fg);
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  font-size:0.95rem;
+  padding:14px 20px;
+  cursor:pointer;
+  flex:1;
+  text-align:center;
+  transition:border-color 0.2s ease, color 0.2s ease;
+}
+
+.bouton-secondaire:hover{border-color:var(--accent);color:var(--accent);}
+
+.boutons-commande .bouton-principal{flex:1;}
+
+.confirmation-commande{
+  border:1px solid var(--accent);
+  padding:40px;
+  text-align:center;
+  font-family:'JetBrains Mono', monospace;
+}
+
+.confirmation-commande h2{
+  font-family:'Archivo Black', sans-serif;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:14px;
+  font-size:1.4rem;
+}
+
+@media (max-width:800px){
+  .fiche-produit{grid-template-columns:1fr;}
+  .page-commande{grid-template-columns:1fr;}
+}
+
+@media (max-width:600px){
+  .banniere{height:30vh;}
+  .grille{grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:16px;}
+  .ligne-panier{grid-template-columns:60px 1fr;grid-template-areas:"img nom" "img prix" "img actions";}
+}

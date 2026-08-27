@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commande — Ma boutique</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <a href="boutique.html" class="entete-logo">Ma Boutique</a>
+    <nav class="entete-nav">
+      <a href="boutique.html">Boutique</a>
+      <a href="panier.html" class="lien-panier">
+        Panier <span class="badge-panier">0</span>
+      </a>
+    </nav>
+  </header>
+
+  <div class="contenu">
+    <div class="fil-ariane">
+      <a href="boutique.html">Boutique</a> / <a href="panier.html">Panier</a> / Commande
+    </div>
+
+    <div class="section-header">
+      <h2>Finaliser la commande</h2>
+    </div>
+
+    <div id="zone-commande"></div>
+  </div>
+
+  <script src="produits.js"></script>
+  <script src="panier.js"></script>
+  <script src="telegram-config.js"></script>
+  <script>
+    const zone = document.getElementById("zone-commande");
+    const panier = lirePanier();
+
+    if(panier.length === 0){
+      zone.innerHTML = '<div class="panier-vide">Ton panier est vide. <a href="boutique.html" style="color:var(--accent)">Retourner à la boutique</a></div>';
+    }else{
+
+      // ---- Calcul du récap ----
+      let total = 0;
+      let lignesRecap = "";
+      panier.forEach(item => {
+        const produit = PRODUITS.find(p => p.id === item.id);
+        if(!produit) return;
+        const sousTotal = produit.prix * item.quantite;
+        total += sousTotal;
+        lignesRecap += `
+          <div class="recap-ligne">
+            <span class="recap-nom">${echapperHTML(produit.nom)} <span class="recap-qte">x${item.quantite}</span></span>
+            <span>${formaterPrix(sousTotal)}</span>
+          </div>`;
+      });
+
+      zone.innerHTML = `
+        <div class="page-commande">
+
+          <div>
+            <div class="ligne-champs">
+              <div class="champ">
+                <label>Prénom</label>
+                <input type="text" id="prenom" placeholder="Prénom" maxlength="50">
+                <div class="erreur-champ" id="erreur-prenom">Indique ton prénom.</div>
+              </div>
+              <div class="champ">
+                <label>Nom</label>
+                <input type="text" id="nom" placeholder="Nom" maxlength="50">
+                <div class="erreur-champ" id="erreur-nom">Indique ton nom.</div>
+              </div>
+            </div>
+
+            <div class="champ">
+              <label>Plateforme de contact</label>
+              <div class="options-radio">
+                <label class="option-radio">
+                  <input type="radio" name="plateforme" value="Telegram"> Telegram
+                </label>
+                <label class="option-radio">
+                  <input type="radio" name="plateforme" value="Snapchat"> Snapchat
+                </label>
+              </div>
+              <div class="erreur-champ" id="erreur-plateforme">Choisis une plateforme.</div>
+            </div>
+
+            <div class="champ">
+              <label id="label-pseudo">Nom d'utilisateur</label>
+              <input type="text" id="pseudo" placeholder="@pseudo" maxlength="50">
+              <div class="erreur-champ" id="erreur-pseudo">Indique ton nom d'utilisateur.</div>
+            </div>
+
+            <div class="champ">
+              <label>Mode de réception</label>
+              <div class="options-radio">
+                <label class="option-radio">
+                  <input type="radio" name="reception" value="livraison"> Livraison à une adresse
+                </label>
+                <label class="option-radio">
+                  <input type="radio" name="reception" value="surplace"> Retrait sur place
+                </label>
+              </div>
+              <div class="erreur-champ" id="erreur-reception">Choisis un mode de réception.</div>
+            </div>
+
+            <div class="champ" id="bloc-adresse" style="display:none">
+              <label>Adresse</label>
+              <textarea id="adresse" placeholder="Numéro, rue, code postal, ville..." maxlength="300"></textarea>
+              <div class="erreur-champ" id="erreur-adresse">Indique une adresse.</div>
+            </div>
+
+            <div class="boutons-commande">
+              <button type="button" class="bouton-secondaire" id="btn-annuler">Annuler</button>
+              <button type="button" class="bouton-principal" id="btn-valider">Valider</button>
+            </div>
+          </div>
+
+          <div class="recap-commande">
+            <div class="recap-titre">Récapitulatif</div>
+            ${lignesRecap}
+            <div class="recap-total">
+              <span>Total</span>
+              <span>${formaterPrix(total)}</span>
+            </div>
+          </div>
+
+        </div>
+      `;
+
+      // Affiche/masque le champ adresse selon le mode de réception choisi
+      document.querySelectorAll('input[name="reception"]').forEach(radio => {
+        radio.addEventListener("change", (e) => {
+          document.getElementById("bloc-adresse").style.display =
+            e.target.value === "livraison" ? "block" : "none";
+        });
+      });
+
+      // Met à jour le label du pseudo selon la plateforme choisie
+      document.querySelectorAll('input[name="plateforme"]').forEach(radio => {
+        radio.addEventListener("change", (e) => {
+          document.getElementById("label-pseudo").textContent =
+            "Nom d'utilisateur " + e.target.value;
+        });
+      });
+
+      document.getElementById("btn-annuler").addEventListener("click", () => {
+        window.location.href = "panier.html";
+      });
+
+      document.getElementById("btn-valider").addEventListener("click", async () => {
+        // btn déjà désactivé pendant un envoi en cours = anti double-clic
+        const btn = document.getElementById("btn-valider");
+        if(btn.disabled) return;
+
+        let valide = true;
+
+        const prenom = nettoyerTexteLigne(document.getElementById("prenom").value, 50);
+        document.getElementById("erreur-prenom").style.display = prenom ? "none" : "block";
+        if(!prenom) valide = false;
+
+        const nom = nettoyerTexteLigne(document.getElementById("nom").value, 50);
+        document.getElementById("erreur-nom").style.display = nom ? "none" : "block";
+        if(!nom) valide = false;
+
+        const plateforme = document.querySelector('input[name="plateforme"]:checked');
+        document.getElementById("erreur-plateforme").style.display = plateforme ? "none" : "block";
+        if(!plateforme) valide = false;
+
+        const pseudo = nettoyerTexteLigne(document.getElementById("pseudo").value, 50);
+        document.getElementById("erreur-pseudo").style.display = pseudo ? "none" : "block";
+        if(!pseudo) valide = false;
+
+        const reception = document.querySelector('input[name="reception"]:checked');
+        document.getElementById("erreur-reception").style.display = reception ? "none" : "block";
+        if(!reception) valide = false;
+
+        let adresse = "";
+        if(reception && reception.value === "livraison"){
+          adresse = nettoyerTexteLigne(document.getElementById("adresse").value, 300);
+          document.getElementById("erreur-adresse").style.display = adresse ? "none" : "block";
+          if(!adresse) valide = false;
+        }
+
+        if(!valide) return;
+
+        btn.textContent = "Envoi...";
+        btn.disabled = true;
+
+        // ---- Construction du message envoyé sur Telegram ----
+        let messageArticles = "";
+        panier.forEach(item => {
+          const produit = PRODUITS.find(p => p.id === item.id);
+          if(!produit) return;
+          messageArticles += `- ${produit.nom} x${item.quantite} — ${formaterPrix(produit.prix * item.quantite)}\n`;
+        });
+
+        const messageTelegram =
+`🛒 NOUVELLE COMMANDE
+
+👤 ${prenom} ${nom}
+📱 ${plateforme.value} : ${pseudo}
+📦 ${reception.value === "livraison" ? "Livraison à : " + adresse : "Retrait sur place"}
+
+Articles :
+${messageArticles}
+💰 Total : ${formaterPrix(total)}`;
+
+        const envoiReussi = await envoyerSurTelegram(messageTelegram);
+
+        // Commande "validée" : le panier est vidé qu'importe si l'envoi Telegram a marché
+        localStorage.removeItem(PANIER_CLE);
+        majBadgePanier();
+
+        zone.innerHTML = `
+          <div class="confirmation-commande">
+            <h2>Commande enregistrée ✓</h2>
+            <p style="color:#d8d6cf">${echapperHTML(prenom)} ${echapperHTML(nom)}</p>
+            <p style="color:#d8d6cf;margin-top:6px">Contact : ${echapperHTML(plateforme.value)} — ${echapperHTML(pseudo)}</p>
+            <p style="color:#d8d6cf;margin-top:6px">
+              ${reception.value === "livraison" ? "Livraison à : " + echapperHTML(adresse) : "Retrait sur place"}
+            </p>
+            ${envoiReussi ? "" : '<p class="note-envoi">⚠ Le récapitulatif n\'a pas pu être envoyé sur Telegram (vérifie telegram-config.js).</p>'}
+            <p style="margin-top:20px"><a href="boutique.html" style="color:var(--accent)">Retour à la boutique</a></p>
+          </div>
+        `;
+      });
+    }
+  </script>
+</body>
+</html>
