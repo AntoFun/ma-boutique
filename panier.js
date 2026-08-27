@@ -1,112 +1,18 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panier — Ma boutique</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+// ==================================================================
+// GESTION DU PANIER — pas besoin d'y toucher normalement
+// ==================================================================
+const PANIER_CLE = "mb_panier";
 
-  <header class="entete">
-    <a href="boutique.html" class="entete-logo">Ma Boutique</a>
-    <nav class="entete-nav">
-      <a href="boutique.html">Boutique</a>
-      <a href="panier.html" class="lien-panier">
-        Panier <span class="badge-panier">0</span>
-      </a>
-    </nav>
-  </header>
+function lirePanier(){
+  let donnees;
+  try{
+    donnees = JSON.parse(localStorage.getItem(PANIER_CLE)) || [];
+  }catch(e){
+    return [];
+  }
+  if(!Array.isArray(donnees)) return [];
 
-  <div class="contenu">
-    <div class="section-header">
-      <h2>Panier</h2>
-    </div>
-    <div id="liste-panier"></div>
-    <div id="zone-total"></div>
-  </div>
-
-  <script src="produits.js"></script>
-  <script src="panier.js"></script>
-  <script>
-    function afficherPanier(){
-      const panier = lirePanier();
-      const liste = document.getElementById("liste-panier");
-      const zoneTotal = document.getElementById("zone-total");
-      liste.innerHTML = "";
-      zoneTotal.innerHTML = "";
-
-      if(panier.length === 0){
-        liste.innerHTML = '<div class="panier-vide">Ton panier est vide. <a href="boutique.html" style="color:var(--accent)">Retourner à la boutique</a></div>';
-        return;
-      }
-
-      let total = 0;
-
-      panier.forEach(item => {
-        const produit = PRODUITS.find(p => p.id === item.id);
-        if(!produit) return;
-
-        const sousTotal = produit.prix * item.quantite;
-        total += sousTotal;
-
-        const ligne = document.createElement("div");
-        ligne.className = "ligne-panier";
-
-        const image = creerImageAvecSecours(produit.images[0], produit.nom, "ligne-panier");
-        ligne.appendChild(image);
-
-        const infoNom = document.createElement("div");
-        infoNom.innerHTML = `
-          <div class="ligne-panier-nom">${echapperHTML(produit.nom)}</div>
-          <div class="ligne-panier-ref">Réf. ${echapperHTML(produit.ref)}</div>
-        `;
-        ligne.appendChild(infoNom);
-
-        const stepper = document.createElement("div");
-        stepper.className = "stepper";
-        stepper.innerHTML = `
-          <button type="button" data-action="moins">−</button>
-          <span>${echapperHTML(item.quantite)}</span>
-          <button type="button" data-action="plus">+</button>
-        `;
-        stepper.querySelector('[data-action="moins"]').addEventListener("click", () => {
-          modifierQuantite(produit.id, item.quantite - 1);
-          afficherPanier();
-        });
-        stepper.querySelector('[data-action="plus"]').addEventListener("click", () => {
-          modifierQuantite(produit.id, item.quantite + 1);
-          afficherPanier();
-        });
-        ligne.appendChild(stepper);
-
-        const prix = document.createElement("div");
-        prix.className = "ligne-panier-prix";
-        prix.textContent = formaterPrix(sousTotal);
-        ligne.appendChild(prix);
-
-        const retirer = document.createElement("button");
-        retirer.className = "retirer-btn";
-        retirer.textContent = "✕";
-        retirer.addEventListener("click", () => {
-          retirerDuPanier(produit.id);
-          afficherPanier();
-        });
-        ligne.appendChild(retirer);
-
-        liste.appendChild(ligne);
-      });
-
-      zoneTotal.innerHTML = `
-        <div class="panier-total">
-          <span>Total</span>
-          <span>${formaterPrix(total)}</span>
-        </div>
-        <a href="commande.html" class="bouton-principal" style="margin-top:20px;display:block;text-align:center">Passer commande</a>
-      `;
-    }
-
-    afficherPanier();
-  </script>
-</body>
-</html>
+  // On valide chaque entrée : id doit être un nombre qui correspond à un
+  // vrai produit, quantité doit être un entier raisonnable (1 à 99).
+  // Ça évite qu'une donnée corrompue ou trafiquée dans le localStorage
+  // ne casse la page ou ne
