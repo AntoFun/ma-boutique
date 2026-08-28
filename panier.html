@@ -57,17 +57,21 @@
         ligne.appendChild(image);
 
         const infoNom = document.createElement("div");
+        infoNom.className = "ligne-panier-info";
         infoNom.innerHTML = `
           <div class="ligne-panier-nom">${echapperHTML(produit.nom)}</div>
           <div class="ligne-panier-ref">Réf. ${echapperHTML(produit.ref)}</div>
         `;
         ligne.appendChild(infoNom);
 
+        const actions = document.createElement("div");
+        actions.className = "ligne-panier-actions";
+
         const stepper = document.createElement("div");
         stepper.className = "stepper";
         stepper.innerHTML = `
           <button type="button" data-action="moins">−</button>
-          <span>${item.quantite}</span>
+          <span>${echapperHTML(item.quantite)}</span>
           <button type="button" data-action="plus">+</button>
         `;
         stepper.querySelector('[data-action="moins"]').addEventListener("click", () => {
@@ -78,12 +82,12 @@
           modifierQuantite(produit.id, item.quantite + 1);
           afficherPanier();
         });
-        ligne.appendChild(stepper);
+        actions.appendChild(stepper);
 
         const prix = document.createElement("div");
         prix.className = "ligne-panier-prix";
         prix.textContent = formaterPrix(sousTotal);
-        ligne.appendChild(prix);
+        actions.appendChild(prix);
 
         const retirer = document.createElement("button");
         retirer.className = "retirer-btn";
@@ -92,7 +96,9 @@
           retirerDuPanier(produit.id);
           afficherPanier();
         });
-        ligne.appendChild(retirer);
+        actions.appendChild(retirer);
+
+        ligne.appendChild(actions);
 
         liste.appendChild(ligne);
       });
